@@ -47,6 +47,8 @@ ALL_INCS = $ngx_include_opt$ngx_incs
 
 END
 
+DSO_ALL_INCS=$ngx_include_opt$ngx_incs
+
 
 ngx_all_srcs="$CORE_SRCS"
 
@@ -69,6 +71,9 @@ CORE_DEPS = $ngx_deps
 CORE_INCS = $ngx_include_opt$ngx_incs
 
 END
+
+DSO_CORE_DEPS=$ngx_deps
+DSO_CORE_INCS=$ngx_include_opt$ngx_incs
 
 
 # the http dependences and include pathes
@@ -93,6 +98,9 @@ HTTP_DEPS = $ngx_deps
 HTTP_INCS = $ngx_include_opt$ngx_incs
 
 END
+
+DSO_HTTP_DEPS=$ngx_deps
+DSO_HTTP_INCS=$ngx_include_opt$ngx_incs
 
 fi
 
@@ -416,4 +424,105 @@ $ngx_pch
 
 END
 
+fi
+
+
+if [ $NGX_DSO = YES ] ; then
+    CORE_DEPS_TEMP=
+    CORE_INCS_TEMP=
+    HTTP_DEPS_TEMP=
+    HTTP_INCS_TEMP=
+    ALL_INCS_TEMP=
+
+    for dai in $DSO_ALL_INCS
+    do
+        if [ "$dai" = "-I" ]; then
+            ALL_INCS_TEMP="$ALL_INCS_TEMP $dai"
+        elif [ "$dai" = "\\" ]; then
+            ALL_INCS_TEMP="$ALL_INCS_TEMP \\"
+        elif test -n "$dai"; then
+            ALL_INCS_TEMP="$ALL_INCS_TEMP `pwd`/$dai"
+        fi
+    done
+
+    for cdep in $DSO_CORE_DEPS
+    do
+        CORE_DEPS_TEMP="$CORE_DEPS_TEMP `pwd`/$cdep"
+    done
+
+    for dci in $DSO_CORE_INCS
+    do
+        if [ "$dci" = "-I" ]; then
+            CORE_INCS_TEMP="$CORE_INCS_TEMP $dci"
+        elif [ "$dci" = "\\" ]; then
+            CORE_INCS_TEMP="$CORE_INCS_TEMP \\"
+        elif test -n "$dci"; then
+            CORE_INCS_TEMP="$CORE_INCS_TEMP `pwd`/$dci"
+        fi
+    done
+
+    for hdep in $DSO_HTTP_DEPS
+    do
+        HTTP_DEPS_TEMP="$HTTP_DEPS_TEMP `pwd`/$hdep"
+    done
+
+    for dhi in $DSO_HTTP_INCS
+    do
+        if [ "$dhi" = "-I" ]; then
+            HTTP_INCS_TEMP="$HTTP_INCS_TEMP $dhi"
+        elif [ "$dhi" = "\\" ]; then
+            HTTP_INCS_TEMP="$HTTP_INCS_TEMP \\"
+        elif test -n "$dhi"; then
+            HTTP_INCS_TEMP="$HTTP_INCS_TEMP `pwd`/$dhi"
+        fi
+    done
+
+    cat << END                                            > $NGX_DSO_COMPILE
+#!/bin/sh
+
+ngx_soext='.so'
+CC=$CC
+CFLAGS='$CFLAGS -fPIC'
+CPP='$CPP'
+LINK='$LINK  -fPIC -shared'
+
+
+CORE_LIBS='$CORE_LIBS'
+CORE_LINK='$ngx_link'
+
+NGX_LD_OPT='$NGX_LD_OPT'
+NGX_PREFIX=$NGX_PREFIX
+
+ngx_regex_dirsep='$ngx_regex_dirsep'
+ngx_cont='$ngx_cont'
+ngx_cc='$ngx_cc'
+ngx_tab='$ngx_tab'
+ngx_objout='$ngx_objout'
+NGX_AUX='$NGX_AUX'
+ngx_long_regex_cont='$ngx_long_regex_cont'
+ngx_dirsep='$ngx_dirsep'
+ngx_binext='$ngx_binext'
+ngx_long_start='$ngx_long_start'
+ngx_long_cont='$ngx_long_cont'
+ngx_rcc='$ngx_rcc'
+ngx_spacer='$ngx_spacer'
+ngx_objext='$ngx_objext'
+ngx_regex_cont='$ngx_regex_cont'
+ngx_binout='$ngx_binout'
+ngx_binout='$ngx_binout'
+NGX_DSO_PATH=$NGX_DSO_PATH
+NGX_AUTOCONF_ERR=$NGX_AUTOCONF_ERR
+NGX_AUTOTEST=$NGX_AUTOTEST
+END
+
+    cat contrib/dso.in >> $NGX_DSO_COMPILE
+
+    sed -i -e "s|%%ALL_INCS%%|'$ALL_INCS_TEMP'|g" \
+	-e "s|%%CORE_DEPS%%|'$CORE_DEPS_TEMP'|g" \
+	-e "s|%%CORE_INCS%%|'$CORE_INCS_TEMP'|g" \
+	-e "s|%%HTTP_DEPS%%|'$HTTP_DEPS_TEMP'|g" \
+	-e "s|%%HTTP_INCS%%|'$HTTP_INCS_TEMP'|g" \
+	-e "s|%%NGX_SOURCE_HOME%%|`pwd`|g" \
+	-e "s|%%ngx_soext%%|'\.so'|g" \
+	$NGX_DSO_COMPILE
 fi

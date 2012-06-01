@@ -15,6 +15,9 @@ NGX_LOCK_PATH=
 NGX_USER=
 NGX_GROUP=
 
+NGX_DSO_PATH=
+NGX_SOURCE_PATH=`pwd`
+
 CC=${CC:-gcc}
 CPP=
 NGX_OBJS=objs
@@ -46,6 +49,74 @@ USE_THREADS=NO
 
 NGX_FILE_AIO=NO
 NGX_IPV6=NO
+
+NGX_DSO=YES
+NGX_DSO_MAX=128
+NGX_ALL_MODULES="
+    ngx_core_module
+    ngx_errlog_module
+    ngx_conf_module
+    ngx_events_module
+    ngx_event_core_module
+    ngx_epoll_module
+    ngx_openssl_module
+    ngx_http_module
+    ngx_http_core_module
+    ngx_http_log_module
+    ngx_http_upstream_module
+    ngx_http_static_module
+    ngx_http_gzip_static_module
+    ngx_http_dav_module
+    ngx_http_autoindex_module
+    ngx_http_index_module
+    ngx_http_random_index_module
+    ngx_http_concat_module
+    ngx_http_auth_basic_module
+    ngx_http_access_module
+    ngx_http_limit_zone_module
+    ngx_http_limit_req_module
+    ngx_http_realip_module
+    ngx_http_geo_module
+    ngx_http_geoip_module
+    ngx_http_map_module
+    ngx_http_split_clients_module
+    ngx_http_referer_module
+    ngx_http_rewrite_module
+    ngx_http_ssl_module
+    ngx_http_proxy_module
+    ngx_http_fastcgi_module
+    ngx_http_uwsgi_module
+    ngx_http_scgi_module
+    ngx_http_memcached_module
+    ngx_http_empty_gif_module
+    ngx_http_browser_module
+    ngx_http_user_agent_module
+    ngx_http_secure_link_module
+    ngx_http_degradation_module
+    ngx_http_sysguard_module
+    ngx_http_flv_module
+    ngx_http_slice_module
+    ngx_http_mp4_module
+    ngx_http_upstream_ip_hash_module
+    ngx_http_stub_status_module
+    ngx_http_write_filter_module
+    ngx_http_header_filter_module
+    ngx_http_chunked_filter_module
+    ngx_http_range_header_filter_module
+    ngx_http_gzip_filter_module
+    ngx_http_postpone_filter_module
+    ngx_http_ssi_filter_module
+    ngx_http_charset_filter_module
+    ngx_http_xslt_filter_module
+    ngx_http_image_filter_module
+    ngx_http_sub_filter_module
+    ngx_http_addition_filter_module
+    ngx_http_userid_filter_module
+    ngx_http_footer_filter_module
+    ngx_http_headers_filter_module
+    ngx_http_copy_filter_module
+    ngx_http_range_body_filter_module
+    ngx_http_not_modified_filter_module"
 
 HTTP=YES
 
@@ -185,6 +256,8 @@ do
         --user=*)                        NGX_USER="$value"          ;;
         --group=*)                       NGX_GROUP="$value"         ;;
 
+	--dso-path=*)                    NGX_DSO_PATH="$value"      ;;
+
         --crossbuild=*)                  NGX_PLATFORM="$value"      ;;
 
         --builddir=*)                    NGX_OBJS="$value"          ;;
@@ -205,6 +278,9 @@ do
         --with-file-aio)                 NGX_FILE_AIO=YES           ;;
         --with-ipv6)                     NGX_IPV6=YES               ;;
         --with-syslog)                   NGX_SYSLOG=YES             ;;
+
+	--without-dso)                   NGX_DSO=NO        ;;
+        --with-dso=*)                    NGX_DSO_MAX="$value" ;;
 
         --without-http)                  HTTP=NO                    ;;
         --without-http-cache)            HTTP_CACHE=NO              ;;
@@ -368,6 +444,9 @@ cat << END
   --with-ipv6                        enable IPv6 support
   --with-syslog                      enable syslog logging
 
+  --without-dso                      disable dso module load
+  --with-dso=COUNT                   set dso module max count(default is 128)
+
   --with-http_ssl_module             enable ngx_http_ssl_module
   --with-http_realip_module          enable ngx_http_realip_module
   --with-http_addition_module        enable ngx_http_addition_module
@@ -520,6 +599,10 @@ if [ ".$NGX_ERROR_LOG_PATH" = ".stderr" ]; then
 else
     NGX_ERROR_LOG_PATH=${NGX_ERROR_LOG_PATH:-logs/error.log}
 fi
+
+
+NGX_DSO_PATH=${NGX_MODULE_PATH:-modules}
+
 
 NGX_HTTP_LOG_PATH=${NGX_HTTP_LOG_PATH:-logs/access.log}
 NGX_HTTP_CLIENT_TEMP_PATH=${NGX_HTTP_CLIENT_TEMP_PATH:-client_body_temp}

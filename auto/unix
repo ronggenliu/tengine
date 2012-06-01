@@ -271,6 +271,13 @@ if [ $ngx_found != yes ]; then
 
     if [ $ngx_found = yes ]; then
         NGX_LIBDL="-ldl"
+    else
+	if [ $NGX_DSO = YES] ; then
+            cat << END
+$0: no supported dlopen(dso module) was found.
+
+END
+	fi
     fi
 fi
 
