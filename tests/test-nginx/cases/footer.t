@@ -12,6 +12,9 @@ __DATA__
 --- config
     location /e {
     }
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx_limit_access_module ngx_http_limit_access_module
 --- user_files
 >>> a.html
 --- request
@@ -20,6 +23,9 @@ __DATA__
 taobao
 
 === TEST 1:1
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx_limit_access_module ngx_http_limit_access_module
 --- config
     location /e {
     }
@@ -31,6 +37,9 @@ taobao
 HTTP/1.1 200 OK
 
 === TEST 2:2
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx_limit_access_module ngx_http_limit_access_module
 --- config
     location /e {
     }

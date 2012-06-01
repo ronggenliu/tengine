@@ -5,6 +5,10 @@ run_tests();
 __DATA__
 
 === TEST 2:2
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                    1;
@@ -46,6 +50,10 @@ User-Agent: Mozilla/5.0 (X11; Linux i686; rv:6.0) Gecko/20100101 Firefox/6.0
 Firefox
 
 === TEST 3:3
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                     1;
@@ -88,6 +96,10 @@ msie6
 
 
 === TEST 4:4
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -129,6 +141,10 @@ User-Agent: Opera/9.80 (Windows NT 6.1; U; pl) Presto/2.6.31 Version/10.70
 Opera
 
 === TEST 5:5
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -170,6 +186,10 @@ User-Agent: Opera/13.80 (Windows NT 6.1; U; pl) Presto/2.6.31 Version/10.70
 msie6
 
 === TEST 6:6
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -211,6 +231,10 @@ User-Agent: curl/7.15.5 (x86_64-redhat-linux-gnu) libcurl/7.15.5 OpenSSL/0.9.8b 
 msie6
 
 === TEST 7:7
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -257,6 +281,10 @@ User-Agent: Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.1 (KHTML, like Gecko) 
 Chrome2
 
 === TEST 8:8
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -304,6 +332,10 @@ User-Agent: Mozilla/4.0 (compatible; MSIE 9; Windows NT 6.1; Trident/5.0)
 msie9
 
 === TEST 9:9
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
@@ -355,6 +387,10 @@ User-Agent: Mozilla/5.0 (Windows NT 5.1) AppleWebKit/535.2 (KHTML, like Gecko) C
 Chrome3
 
 === TEST 10:10
+--- include_dso_modules
+nginx-http-footer-filter ngx_http_footer_filter_module
+nginx-http-user-agent ngx_http_user_agent_module
+echo-nginx-module ngx_http_echo_module
 --- http_config
    user_agent $browser {
        default                                      1;
