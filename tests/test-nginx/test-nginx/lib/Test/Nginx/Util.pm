@@ -288,8 +288,6 @@ sub include_dso_modules ($) {
     my $raw = $block->include_dso_modules;
     my $in;
 
-    warn "$DSO_path\n";
-
     open $in, '<', \$raw;
     while (<$in>) {
         if (/(\S+)(?:\s+(.+))?/) {
@@ -305,7 +303,7 @@ sub include_dso_modules ($) {
         $dso_compile_dir = "./";
     }
 
-    warn "$NginxBinary\n";
+    #warn "$NginxBinary\n";
 
     my $dso_compile_script;
 
@@ -443,8 +441,15 @@ sub write_config_file ($$$) {
         $main_config = '';
     }
 
-    open my $out, ">$ConfFile" or
+    if (!defined $dso_config) {
+        $dso_config = '';
+    }
+
+    my $out;
+
+    open $out, ">$ConfFile" or
         die "Can't open $ConfFile for writing: $!\n";
+
     print $out <<_EOC_;
 worker_processes  $Workers;
 daemon $DaemonEnabled;
@@ -520,7 +525,7 @@ sub get_nginx_version () {
     if (!defined $out || $? != 0) {
         warn "Failed to get the version of the Nginx in PATH.\n";
     }
-    if ($out =~ m{(?:nginx|ngx_openresty|tengine)/(\d+)\.(\d+)\.(\d+)}s) {
+    if ($out =~ m{(?:nginx|ngx_openresty)/(\d+)\.(\d+)\.(\d+)}s) {
         $NginxRawVersion = "$1.$2.$3";
         return get_canon_version($1, $2, $3);
     }
