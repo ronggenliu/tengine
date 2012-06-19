@@ -292,7 +292,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
         ngx_show_dso_modules(&conf);
 #endif
         ngx_destroy_cycle_pools(&conf);
-        return NULL;
+        return cycle;
     }
 
     if (ngx_test_config && !ngx_quiet_mode) {

@@ -19,10 +19,10 @@ do
     esac
 
     case "$option" in
-        --help)                          help=yes                                ;;
+        --help)                          help=yes                       ;;
 
-        --prefix=)                       NGX_DSO_PREFIX="!"                      ;;
-        --prefix=*)                      NGX_DSO_PREFIX="$value"                 ;;
+        --prefix=)                       NGX_DSO_PREFIX="!"             ;;
+        --prefix=*)                      NGX_DSO_PREFIX="$value"        ;;
 
         --add-module=*)                  NGX_DSO_ADDONS="$NGX_DSO_ADDONS $value" ;;
 
@@ -203,8 +203,8 @@ if test -n "$NGX_DSO_ADDONS"; then
 
             dso_http_incs=`echo $HTTP_INCS \
                 | sed -e "s/  *\([^ ][^ ]*\)/$ngx_regex_cont$ngx_include_opt\1/g" \
-                -e "s/\//$ngx_regex_dirsep/g"`    
-            
+                -e "s/\//$ngx_regex_dirsep/g"`
+
             if test -n "$dso_core_incs"; then
                 CORE_INCS="$CORE_INCS_TEMP -I $dso_core_incs"
             else
@@ -229,3 +229,4 @@ else
     echo "please assign module path"
     exit 1
 fi
+

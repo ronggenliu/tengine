@@ -629,6 +629,12 @@ sub check_response_headers($$$$$) {
             if ( !defined $name ) {
                 $name = '';
             }
+            if ( !defined $key ) {
+                $key = '';
+            }
+            if ( !defined $val ) {
+                $val = '';
+            }
             SKIP: {
                 skip "$name - tests skipped due to the lack of directive $dry_run", 1 if $dry_run;
                 like $expected_val, qr/^$val$/, "$name - header $key like ok";

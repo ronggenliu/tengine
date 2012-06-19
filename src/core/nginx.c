@@ -376,6 +376,10 @@ main(int argc, char *const *argv)
         return 0;
     }
 
+    if (ngx_show_modules) {
+        return 0;
+    }
+
     if (ngx_dump_config) {
         return 0;
     }

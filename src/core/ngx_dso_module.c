@@ -258,7 +258,7 @@ ngx_dso_open(ngx_dso_module_t *dl_m)
     module_name = dl_m->name;
     module_path = dl_m->path;
 
-    dl_handle = dlopen((char *) module_path.data, RTLD_LAZY | RTLD_GLOBAL);
+    dl_handle = dlopen((char *) module_path.data, RTLD_NOW | RTLD_GLOBAL);
     if (dl_handle == NULL) {
         ngx_log_stderr(errno, "load module failed %s", dlerror());
         return NULL;
@@ -294,6 +294,8 @@ ngx_dso_insert_module(ngx_module_t *module, ngx_int_t flag_postion)
     if (m == NULL) {
         return NGX_CONF_ERROR;
     }
+
+    ngx_modules[j] = module;
 
     return NGX_CONF_OK;
 }
@@ -403,7 +405,7 @@ ngx_dso_load(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     dl_m->name = module_name;
     dl_m->path = module_path;
-    
+
     module = ngx_dso_open(dl_m);
     if (module == NULL) {
         return NGX_CONF_ERROR;
@@ -414,18 +416,20 @@ ngx_dso_load(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return NGX_CONF_ERROR;
     }
 
-    if (module->major_version != TENGINE_MAGIC_NUMBER_MAJOR
-       || module->minor_version > TENGINE_MAGIC_NUMBER_MINOR)
+    if (module->major_version != NGX_MAGIC_NUMBER_MAJOR
+       || module->minor_version > NGX_MAGIC_NUMBER_MINOR)
     {
         ngx_log_stderr(0,"Module \"%V\" is not compatible with this "
             "version of Tengine (found %d.%d, need %d.%d). Please "
             "contact the vendor for the correct version.",
                       &module_name, module->major_version,
-            module->minor_version,TENGINE_MAGIC_NUMBER_MAJOR, TENGINE_MAGIC_NUMBER_MINOR);
+            module->minor_version, NGX_MAGIC_NUMBER_MAJOR, NGX_MAGIC_NUMBER_MINOR);
         return NGX_CONF_ERROR;
     }
 
     postion = ngx_dso_find_postion(dcf, module_name);
+
+    ngx_log_debug1(NGX_LOG_DEBUG_CORE, cf->log, 0, "dso find postion(%i)", postion);
 
     rv = ngx_dso_insert_module(module, postion);
     if (rv == NGX_CONF_ERROR) {
@@ -469,7 +473,7 @@ ngx_dso_find_postion(ngx_dso_conf_t *dcf, ngx_str_t module_name)
                 if (len2 == len3
                    && ngx_strncmp(ngx_all_module_names[i - 1], ngx_module_names[k], len2) == 0)
                 {
-                    near = k;
+                    near = k + 1;
                     break;
                 }
             }
@@ -500,7 +504,7 @@ ngx_dso_find_postion(ngx_dso_conf_t *dcf, ngx_str_t module_name)
             if (len1 == name[i].len
                && ngx_strncmp(name[i].data, ngx_module_names[k], name[i].len) == 0)
             {
-                near = k;
+                near = k + 1;
                 break;
             }
         }
