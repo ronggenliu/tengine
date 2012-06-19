@@ -7,7 +7,7 @@ if test -n "$NGX_SHARED_MODULES"; then
     if [ $NGX_DSO != YES ]; then
     cat << END
 
-when you use shared modules, you should open dso module.
+when you use shared modules, you should enable dso module.
 END
         exit 1
     fi
@@ -463,6 +463,9 @@ if [ $NGX_DSO = YES ] ; then
     ngx_dso_cflag=" -fPIC "
     ngx_dso_link_flag=" -shared "
     ngx_dso_index=2
+
+    ngx_cc="\$(CC) $ngx_compile_opt \$(CFLAGS) \$(CORE_INCS) \$(HTTP_INCS)"
+
     for ngx_shared_modules in $NGX_SHARED_MODULES
     do
         ngx_dso_all_objs=

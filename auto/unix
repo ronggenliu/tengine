@@ -274,7 +274,7 @@ if [ $ngx_found != yes ]; then
     else
 	if [ $NGX_DSO = YES] ; then
             cat << END
-$0: no supported dlopen(dso module) was found, please use --without-dso.
+dlopen(3) required by dso not found, please disable dso (--without-dso).
 
 END
 	fi

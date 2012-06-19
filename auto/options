@@ -184,7 +184,6 @@ HTTP_UPSTREAM_CHECK=NO
 
 # STUB
 HTTP_STUB_STATUS=NO
-HTTP_STUB_STATUS_SHARED=NO
 
 #shared module
 HTTP_XSLT_SHARED=NO
@@ -324,7 +323,6 @@ do
         --with-syslog)                             NGX_SYSLOG=YES             ;;
 
         --without-dso)                             NGX_DSO=NO                 ;;
-        --with-dso=*)                              NGX_DSO_MAX="$value"       ;;
 
         --without-http)                            HTTP=NO                    ;;
         --without-http-cache)                      HTTP_CACHE=NO              ;;
@@ -401,8 +399,6 @@ do
                                                    HTTP_ACCESS=NO                    ;;
         --with-shared-http_autoindex_module)       HTTP_AUTOINDEX_SHARED=YES
                                                    HTTP_AUTOINDEX=NO                 ;;
-        --with-shared-http_status_module)          HTTP_STATUS_SHARED=YES
-                                                   HTTP_STATUS=NO                    ;;
         --with-shared-http_map_module)             HTTP_MAP_SHARED=YES
                                                    HTTP_MAP=NO                       ;;
         --with-shared-http_split_clients_module)   HTTP_SPLIT_CLIENTS_SHARED=YES
@@ -568,7 +564,6 @@ cat << END
   --with-syslog                      enable syslog logging
 
   --without-dso                      disable dso module load
-  --with-dso=COUNT                   set dso module max count(default is 128)
 
   --with-http_ssl_module             enable ngx_http_ssl_module
   --with-http_realip_module          enable ngx_http_realip_module
@@ -610,8 +605,7 @@ cat << END
   --with-shared-http_footer_module   enable ngx_http_footer_module(shared)
   --with-shared-http_access_module   enable ngx_http_access_module(shared)
   --with-shared-http_autoindex_module
-                                     enable ngx_http_auth_basic_module(shared)
-  --with-shared-http_status_module   enable ngx_http_autoindex_module(shared)
+                                     enable ngx_http_autoindex_module(shared)
   --with-shared-http_map_module      enable ngx_http_map_module(shared)
   --with-shared-http_split_clients_module
                                      enable ngx_http_split_clients_module(shared)
