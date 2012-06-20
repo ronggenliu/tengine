@@ -241,7 +241,7 @@ sub write_file_expand($$) {
 	my ($self, $name, $content) = @_;
 
 	$content =~ s/%%TEST_GLOBALS%%/$self->test_globals()/gmse;
-        $content =~ s/%%TEST_GLOBALS_DSO%%/$self->test_globals_dso()/gmse;
+    $content =~ s/%%TEST_GLOBALS_DSO%%/$self->test_globals_dso()/gmse;
 	$content =~ s/%%TEST_GLOBALS_HTTP%%/$self->test_globals_http()/gmse;
 	$content =~ s/%%TESTDIR%%/$self->{_testdir}/gms;
 
@@ -299,10 +299,6 @@ sub test_globals_dso() {
 
         my $s = '';
         
-        #while ( my ($key, $value) = each($self->{_dso_module}) ) {
-            #$s .= "dso_load $key $value;\n";
-        #}
-
         while ( my ($key, $value) = each(%{$self->{_dso_module}}) ) {
             $s .= "dso_load $key $value;\n";
         }
