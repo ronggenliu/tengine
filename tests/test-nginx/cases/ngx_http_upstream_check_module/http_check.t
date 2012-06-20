@@ -116,6 +116,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 6: the http_check test-single server
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;
@@ -136,6 +138,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 7: the http_check test-multi_server
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;
@@ -157,6 +161,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 8: the http_check test
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;
@@ -179,6 +185,8 @@ GET /
 --- response_body_like: ^.*$
 
 === TEST 9: the http_check without check directive
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;
@@ -196,6 +204,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 10: the http_check which does not use the upstream
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;
@@ -217,6 +227,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 11: the http_check which does not use the upstream, with variable
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;

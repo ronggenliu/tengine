@@ -312,10 +312,25 @@ sub include_dso_modules ($) {
     for my $module (@modules) {
         my ($dir, $name) = @$module;
 
-        system("$dso_compile_script --prefix=$DsoDir --add-module=\"$dir\"") == 0
-            or die "Can't compile dso module $dir";
+        my $modules_dir;
 
-        my $dso_module_lib = $DsoDir . "/lib_" . $name . ".so";
+        if (-d $dir) {
+            $modules_dir = $DsoDir;
+            system("$dso_compile_script --prefix=$DsoDir --add-module=\"$dir\"") == 0
+                or die "Can't compile dso module $dir";
+        }
+        else {
+            #warn "$dso_compile_dir\n";
+
+            #The module is compiled in the modules directory?
+            if ($dso_compile_dir =~ /^(.*\/)?([^\/]+)\/?$/) {
+                $modules_dir = $1 . "modules";
+            } else {
+                $modules_dir = "./";
+            }
+        }
+
+        my $dso_module_lib = $modules_dir . "/lib_" . $name . ".so";
 
         if (-f "$dso_module_lib") {
             push @DSO_modules, [$name, $dso_module_lib];

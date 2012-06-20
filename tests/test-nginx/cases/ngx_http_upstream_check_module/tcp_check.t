@@ -32,6 +32,8 @@ GET /
 --- response_body_like: ^<(.*)>$
 
 === TEST 2: the tcp_check test with ip_hash
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server blog.163.com:80;

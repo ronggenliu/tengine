@@ -32,6 +32,8 @@ GET /
 --- response_body_like: ^<(.*)>[\r\n\s\t]*$
 
 === TEST 2: the ssl_hello_check test with ip_hash
+--- include_dso_modules
+ngx_http_upstream_ip_hash_module ngx_http_upstream_ip_hash_module
 --- http_config
     upstream test{
         server www.alipay.com:443;
