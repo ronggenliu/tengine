@@ -14,15 +14,15 @@
 
 
 typedef struct {
-    ngx_str_t                    type;
-    ngx_str_t                    entry;
+    ngx_str_t     type;
+    ngx_str_t     entry;
 } ngx_dso_flagpole_t;
 
 
 typedef struct {
-    ngx_str_t      name;
-    ngx_str_t      path;
-    void          *dl_handle;
+    ngx_str_t     name;
+    ngx_str_t     path;
+    void         *dl_handle;
 } ngx_dso_module_t;
 
 
@@ -94,7 +94,7 @@ ngx_module_t  ngx_dso_module = {
     NULL,                                  /* init thread */
     NULL,                                  /* exit thread */
     NULL,                                  /* exit process */
-    NULL,                          /* exit master */
+    NULL,                                  /* exit master */
     NGX_MODULE_V1_PADDING
 };
 
@@ -379,7 +379,7 @@ ngx_dso_load(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     value = cf->args->elts;
 
-    if (dcf->modules->nelts > NGX_DSO_MAX) {
+    if (dcf->modules->nelts >= NGX_DSO_MAX) {
         ngx_log_stderr(0, "Module \"%V\" could not be loaded, "
             "because the dso module limit(%ui) was reached.",
                       &value[1], NGX_DSO_MAX);
@@ -416,14 +416,14 @@ ngx_dso_load(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         return NGX_CONF_ERROR;
     }
 
-    if (module->major_version != NGX_MAGIC_NUMBER_MAJOR
-       || module->minor_version > NGX_MAGIC_NUMBER_MINOR)
+    if (module->major_version != NGX_NUMBER_MAJOR
+       || module->minor_version > NGX_NUMBER_MINOR)
     {
         ngx_log_stderr(0,"Module \"%V\" is not compatible with this "
             "version of Tengine (found %d.%d, need %d.%d). Please "
             "contact the vendor for the correct version.",
                       &module_name, module->major_version,
-            module->minor_version, NGX_MAGIC_NUMBER_MAJOR, NGX_MAGIC_NUMBER_MINOR);
+            module->minor_version, NGX_NUMBER_MAJOR, NGX_NUMBER_MINOR);
         return NGX_CONF_ERROR;
     }
 

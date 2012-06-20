@@ -282,7 +282,7 @@ ngx_init_cycle(ngx_cycle_t *old_cycle)
     }
 
     if (ngx_show_modules) {
-        ngx_log_stderr(0, "compiled in modules:");
+        ngx_log_stderr(0, "loaded modules:");
 
         for (i = 0; ngx_module_names[i]; i++) {
             ngx_log_stderr(0, "    %s (static)", ngx_module_names[i]);

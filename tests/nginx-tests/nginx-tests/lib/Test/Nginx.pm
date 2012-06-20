@@ -40,6 +40,7 @@ sub new {
 	)
 		or die "Can't create temp directory: $!\n";
 
+        $self->{_dso_module} = ();
 	return $self;
 }
 
@@ -66,8 +67,7 @@ sub has($;) {
 sub set_dso($;) {
         my ($self, $module_name, $module_path) = @_;
 
-        $self->{_dso_module_name} = $module_name;
-        $self->{_dso_module_path} = $module_path;
+        $self->{_dso_module}{$module_name} = $module_path;
 }
 
 sub has_module($) {
@@ -298,8 +298,14 @@ sub test_globals_dso() {
 		if defined $self->{_test_globals_dso};
 
         my $s = '';
+        
+        #while ( my ($key, $value) = each($self->{_dso_module}) ) {
+            #$s .= "dso_load $key $value;\n";
+        #}
 
-        $s .= "dso_load $self->{_dso_module_name} $self->{_dso_module_path};\n";
+        while ( my ($key, $value) = each(%{$self->{_dso_module}}) ) {
+            $s .= "dso_load $key $value;\n";
+        }
 
         $self->{_test_globals_dso} = $s;
 }
