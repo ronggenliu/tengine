@@ -1,8 +1,15 @@
-ALL_INCS=%%ALL_INCS%%
-CORE_DEPS=%%CORE_DEPS%%
-CORE_INCS=%%CORE_INCS%%
-HTTP_DEPS=%%HTTP_DEPS%%
-HTTP_INCS=%%HTTP_INCS%%
+DSO_ALL_INCS=%%ALL_INCS%%
+DSO_CORE_DEPS=%%CORE_DEPS%%
+DSO_CORE_INCS=%%CORE_INCS%%
+DSO_HTTP_DEPS=%%HTTP_DEPS%%
+DSO_HTTP_INCS=%%HTTP_INCS%%
+
+
+ALL_INCS=
+CORE_INCS=
+CORE_DEPS=
+HTTP_INCS=
+HTTP_DEPS=
 
 NGX_SOURCE_HOME=%%NGX_SOURCE_HOME%%
 
@@ -26,6 +33,8 @@ do
 
         --add-module=*)                  NGX_DSO_ADDONS="$NGX_DSO_ADDONS $value" ;;
 
+        --with-nginx-source=*)           NGX_SOURCE_HOME="$value"       ;;
+
         *)
             echo "$0: error: invalid option \"$option\""
             exit 1
@@ -47,6 +56,7 @@ cat << END
 
   --add-module=PATH                  external module of will compile;;
 
+  --with-nginx-source=NGX_SOURCE_HOM set nginx source path;;
 
 END
 
@@ -66,6 +76,7 @@ generate_make () {
     NGX_DSO_MAKEFILE=objs/Makefile
     NGX_ADDON_DEPS=$2
     NGX_OBJS=objs
+
     test -d $NGX_OBJS || mkdir -p $NGX_OBJS
 
     cat << END                                                     > $NGX_DSO_MAKEFILE
@@ -181,6 +192,87 @@ END
 if test -n "$NGX_DSO_ADDONS"; then
 
     echo configuring additional modules
+
+    for dai in $DSO_ALL_INCS
+    do
+        if [ "$dai" = "-I" ]; then
+            ALL_INCS="$ALL_INCS $dai"
+        elif test -n "$dai"; then
+            case ".$dai" in
+                ./*)
+                    ALL_INCS="$ALL_INCS $dai"
+                    ;;
+
+                *)
+                    ALL_INCS="$ALL_INCS $NGX_SOURCE_HOME/$dai"
+                    ;;
+            esac
+        fi
+    done
+
+    for dcd in $DSO_CORE_DEPS
+    do
+        if test -n "$dcd"; then
+            case ".$dcd" in
+                ./*)
+                    CORE_DEPS="$CORE_DEPS $dcd"
+                    ;;
+
+                *)
+                    CORE_DEPS="$CORE_DEPS $NGX_SOURCE_HOME/$dcd"
+                    ;;
+            esac
+        fi
+    done
+
+    for dci in $DSO_CORE_INCS
+    do
+        if [ "$dci" = "-I" ]; then
+            CORE_INCS="$CORE_INCS $dci"
+        elif test -n "$dci"; then
+            case ".$dci" in
+                ./*)
+                    CORE_INCS="$CORE_INCS $dci"
+                    ;;
+
+                *)
+                    CORE_INCS="$CORE_INCS $NGX_SOURCE_HOME/$dci"
+                    ;;
+            esac
+        fi
+    done
+
+    for dhi in $DSO_HTTP_INCS
+    do
+        if [ "$dhi" = "-I" ]; then
+            HTTP_INCS="$HTTP_INCS $dhi"
+        elif test -n "$dhi"; then
+            case ".$dhi" in
+                ./*)
+                    HTTP_INCS="$HTTP_INCS $dhi"
+                    ;;
+
+                *)
+                    HTTP_INCS="$HTTP_INCS $NGX_SOURCE_HOME/$dhi"
+                    ;;
+            esac
+        fi
+    done
+
+    for dhd in $DSO_HTTP_DEPS
+    do
+        if test -n "$dhd"; then
+            case ".$dhd" in
+                ./*)
+                    HTTP_DEPS="$HTTP_DEPS $dhd"
+                    ;;
+
+                *)
+                    HTTP_DEPS="$HTTP_DEPS $NGX_SOURCE_HOME/$dhd"
+                    ;;
+            esac
+        fi
+    done
 
     for ngx_addon_dir in $NGX_DSO_ADDONS
     do

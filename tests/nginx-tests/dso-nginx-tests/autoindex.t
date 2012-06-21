@@ -23,6 +23,7 @@ select STDOUT; $| = 1;
 
 my $t = Test::Nginx->new()->has(qw/http autoindex/)->plan(16);
 
+$t->set_dso("ngx_http_autoindex_module", "lib_ngx_http_autoindex_module.so");
 $t->set_dso("ngx_http_charset_filter_module", "lib_ngx_http_charset_filter_module.so");
 $t->set_dso("ngx_http_fastcgi_module", "lib_ngx_http_fastcgi_module.so");
 $t->set_dso("ngx_http_uwsgi_module", "lib_ngx_http_uwsgi_module.so");

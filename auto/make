@@ -545,13 +545,15 @@ END
         elif [ "$dai" = "\\" ]; then
             all_incs_temp="$all_incs_temp \\"
         elif test -n "$dai"; then
-            all_incs_temp="$all_incs_temp `pwd`/$dai"
+            all_incs_temp="$all_incs_temp $dai"
         fi
     done
 
     for cdep in $dso_core_deps
     do
-        core_deps_temp="$core_deps_temp `pwd`/$cdep"
+        if test -n "$cdep"; then
+            core_deps_temp="$core_deps_temp $cdep"
+        fi
     done
 
     for dci in $dso_core_incs
@@ -561,13 +563,15 @@ END
         elif [ "$dci" = "\\" ]; then
             core_incs_temp="$core_incs_temp \\"
         elif test -n "$dci"; then
-            core_incs_temp="$core_incs_temp `pwd`/$dci"
+            core_incs_temp="$core_incs_temp $dci"
         fi
     done
 
     for hdep in $dso_http_deps
     do
-        http_deps_temp="$http_deps_temp `pwd`/$hdep"
+        if test -n "$hdep"; then
+            http_deps_temp="$http_deps_temp $hdep"
+        fi
     done
 
     for dhi in $dso_http_incs
@@ -577,7 +581,7 @@ END
         elif [ "$dhi" = "\\" ]; then
             http_incs_temp="$http_incs_temp \\"
         elif test -n "$dhi"; then
-            http_incs_temp="$http_incs_temp `pwd`/$dhi"
+            http_incs_temp="$http_incs_temp $dhi"
         fi
     done
 
@@ -617,16 +621,16 @@ ngx_binout='$ngx_binout'
 NGX_DSO_PATH=$NGX_DSO_PATH
 NGX_AUTOCONF_ERR=$NGX_AUTOCONF_ERR
 NGX_AUTOTEST=$NGX_AUTOTEST
+NGX_AUTO_CONFIG_H=$NGX_AUTO_CONFIG_H
+
 END
 
-    cat contrib/dso.in >> $NGX_DSO_COMPILE
-
-    sed -i -e "s|%%ALL_INCS%%|'$all_incs_temp'|g" \
+    sed -e "s|%%ALL_INCS%%|'$all_incs_temp'|g" \
 	-e "s|%%CORE_DEPS%%|'$core_deps_temp'|g" \
 	-e "s|%%CORE_INCS%%|'$core_incs_temp'|g" \
 	-e "s|%%HTTP_DEPS%%|'$http_deps_temp'|g" \
 	-e "s|%%HTTP_INCS%%|'$http_incs_temp'|g" \
 	-e "s|%%NGX_SOURCE_HOME%%|`pwd`|g" \
 	-e "s|%%ngx_soext%%|'\.so'|g" \
-	$NGX_DSO_COMPILE
+	contrib/dso.in >> $NGX_DSO_COMPILE
 fi
