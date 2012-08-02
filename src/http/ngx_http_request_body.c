@@ -16,8 +16,6 @@ static ngx_int_t ngx_http_write_request_body(ngx_http_request_t *r,
     ngx_chain_t *body);
 static ngx_int_t ngx_http_read_no_buffered_client_request_body(
     ngx_http_request_t *r);
-static ngx_int_t ngx_http_do_read_no_buffered_client_request_body(
-    ngx_http_request_t *r);
 static ngx_int_t ngx_http_read_discarded_request_body(ngx_http_request_t *r);
 static ngx_int_t ngx_http_test_expect(ngx_http_request_t *r);
 
@@ -587,7 +585,6 @@ ngx_http_read_no_buffered_client_request_body(ngx_http_request_t *r)
         if (rb->rest <= (off_t) (b->end - b->last)) {
 
             /* the whole request body could be placed in r->header_in */
-
             return ngx_http_do_read_no_buffered_client_request_body(r);
         }
 
@@ -643,7 +640,7 @@ ngx_http_read_no_buffered_client_request_body(ngx_http_request_t *r)
 }
 
 
-static ngx_int_t
+ngx_int_t
 ngx_http_do_read_no_buffered_client_request_body(ngx_http_request_t *r)
 {
     size_t                     size;
@@ -740,8 +737,6 @@ ngx_http_do_read_no_buffered_client_request_body(ngx_http_request_t *r)
     if (c->read->timer_set) {
         ngx_del_timer(c->read);
     }
-
-    r->read_event_handler = ngx_http_block_reading;
 
     return NGX_OK;
 }
