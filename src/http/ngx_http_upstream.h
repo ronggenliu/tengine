@@ -149,6 +149,7 @@ typedef struct {
     ngx_uint_t                       ignore_headers;
     ngx_uint_t                       next_upstream;
     ngx_uint_t                       store_access;
+    ngx_flag_t                       request_buffering;
     ngx_flag_t                       buffering;
     ngx_flag_t                       pass_request_headers;
     ngx_flag_t                       pass_request_body;
@@ -330,6 +331,7 @@ struct ngx_http_upstream_s {
     unsigned                         keepalive:1;
 
     unsigned                         request_sent:1;
+    unsigned                         request_body_sent:1;
     unsigned                         header_sent:1;
 };
 
