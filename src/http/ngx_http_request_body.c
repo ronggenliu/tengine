@@ -618,14 +618,6 @@ ngx_http_read_no_buffered_client_request_body(ngx_http_request_t *r)
         return NGX_HTTP_INTERNAL_SERVER_ERROR;
     }
 
-    cl = ngx_alloc_chain_link(r->pool);
-    if (cl == NULL) {
-        return NGX_HTTP_INTERNAL_SERVER_ERROR;
-    }
-
-    cl->buf = rb->buf;
-    cl->next = NULL;
-
     if (b && r->request_body_in_single_buf) {
         size = b->last - b->pos;
         ngx_memcpy(rb->buf->pos, b->pos, size);
@@ -634,9 +626,22 @@ ngx_http_read_no_buffered_client_request_body(ngx_http_request_t *r)
         next = &rb->bufs;
     }
 
-    *next = cl;
+    rc = ngx_http_do_read_no_buffered_client_request_body(r);
 
-    return ngx_http_do_read_no_buffered_client_request_body(r);
+    /* The zero buffer should not be appended to the rb->bufs */
+    if (ngx_buf_size(rb->buf)) {
+        cl = ngx_alloc_chain_link(r->pool);
+        if (cl == NULL) {
+            return NGX_HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        cl->buf = rb->buf;
+        cl->next = NULL;
+
+        *next = cl;
+    }
+
+    return rc;
 }
 
 
@@ -660,9 +665,7 @@ ngx_http_do_read_no_buffered_client_request_body(ngx_http_request_t *r)
     for ( ;; ) {
         for ( ;; ) {
             if (rb->buf->last == rb->buf->end) {
-
                 /* The buffer is full */
-                /* TODO: maybe miss the read event */
 
                 return NGX_AGAIN;
             }

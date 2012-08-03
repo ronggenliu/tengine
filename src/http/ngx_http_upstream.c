@@ -1184,7 +1184,11 @@ ngx_http_upstream_connect(ngx_http_request_t *r, ngx_http_upstream_t *u)
     u->writer.connection = c;
     u->writer.limit = 0;
 
-    if (r->request_buffering && u->request_body_sent) {
+    /* 
+     * no buffering request can't reuse the request body, and part of
+     * the body has been sent.
+     */
+    if (!r->request_buffering && u->request_body_sent) {
         ngx_http_upstream_finalize_request(r, u,
                                            NGX_HTTP_INTERNAL_SERVER_ERROR);
     }
@@ -1514,7 +1518,7 @@ ngx_http_upstream_send_no_buffered_request(ngx_http_request_t *r,
 
             if (u->request_body_sent) {
                 ngx_http_upstream_finalize_request(r, u,
-                                                   NGX_HTTP_INTERNAL_SERVER_ERROR);
+                                               NGX_HTTP_INTERNAL_SERVER_ERROR);
             } else {
                 ngx_http_upstream_next(r, u, NGX_HTTP_UPSTREAM_FT_ERROR);
             }
@@ -1529,9 +1533,10 @@ ngx_http_upstream_send_no_buffered_request(ngx_http_request_t *r,
         if (rc == NGX_AGAIN) {
             ngx_add_timer(c->write, u->conf->send_timeout);
 
-            if (ngx_handle_write_event(c->write, u->conf->send_lowat) != NGX_OK) {
+            if (ngx_handle_write_event(c->write, u->conf->send_lowat)
+                != NGX_OK) {
                 ngx_http_upstream_finalize_request(r, u,
-                                                   NGX_HTTP_INTERNAL_SERVER_ERROR);
+                                               NGX_HTTP_INTERNAL_SERVER_ERROR);
                 return;
             }
 
@@ -1542,13 +1547,18 @@ ngx_http_upstream_send_no_buffered_request(ngx_http_request_t *r,
 
         rb = r->request_body;
 
-        if (rb == NULL || rb->rest == 0) {
+        if (rb == NULL || rb->rest == 0 || rb->buf == NULL) {
             break;
         }
 
         u->request_body_sent = 1;
 
         c->log->action = "reading no buffered request body from client";
+
+        if (rb->buf->pos == rb->buf->last) {
+            rb->buf->pos = rb->buf->start;
+            rb->buf->last = rb->buf->start;
+        }
 
         rc = ngx_http_do_read_no_buffered_client_request_body(r);
 
@@ -1579,7 +1589,7 @@ ngx_http_upstream_send_no_buffered_request(ngx_http_request_t *r,
         in->next = NULL;
     }
 
-    /* rc == NGX_OK */
+    /* send all the request body */
 
     if (c->tcp_nopush == NGX_TCP_NOPUSH_SET) {
         if (ngx_tcp_push(c->fd) == NGX_ERROR) {
